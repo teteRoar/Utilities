@@ -48,6 +48,19 @@ Module.Create = function(tree: any, path: string?)
     return t
 end
 
+--[[
+EXAMPLE USAGE:
+
+module.Create({
+    ["YourScriptHub"] = {
+        ["Game"] = {
+            "gameConfigs";
+            "scriptAssets"
+        }
+    }
+})
+]]
+
 Module.WriteConfig = function(path: string, data: any): boolean
     local success = pcall(function()
         writefile(path, HttpService:JSONEncode(data))
@@ -55,12 +68,33 @@ Module.WriteConfig = function(path: string, data: any): boolean
     return success
 end
 
+--[[
+EXAMPLE USAGE:
+
+Module.WriteConfig("YourScriptHub/Game/gameConfigs/rageAimbot.SCRIPTHUBTAG", {
+    SlientAim = true;
+    Aimbot = true;
+    WalkSpeed = 100;
+    JumpPower = 150;
+    SpoofName = "Roblox"
+})
+]]
+
 Module.DecodeConfig = function(path: string): (boolean, any)
     local success, result = pcall(function()
         return HttpService:JSONDecode(readfile(path))
     end)
     return success, success and result or {}
 end
+
+--[[
+EXAMPLE USAGE:
+
+local _, decoded = Module.DecodeConfig("YourScriptHub/Game/gameConfigs/rageAimbot.SCRIPTHUBTAG") -- The _ is for the success boolean, you can also check if the decode was successful by checking if _ is true or false.
+print(decoded.SlientAim)
+print(decoded.WalkSpeed)
+print(decoded.SpoofName)
+]]
 
 Module.GetFileName = function(path: string, noExtension: boolean): string
     local name = path:match("[^/\\]+$") or path
@@ -72,10 +106,18 @@ end
 
 Module.GetNameFromDirectory = Module.GetFileName
 
-for i, v in Module do
-    if typeof(v) == "function" then
-        getgenv()[i] = v
-    end
-end
+--[[
+EXAMPLE USAGE:
+
+-- You don't have to add extensions to the path, but you can if you want to. The functions will work either way.
+print(Module.GetFileName("YourScriptHub/Game/gameConfigs/rageAimbot.SCRIPTHUBTAG"))
+print(Module.GetNameFromDirectory("YourScriptHub/Game/gameConfigs/rageAimbot.SCRIPTHUBTAG"))
+]]
+
+-- for i, v in Module do
+--     if typeof(v) == "function" then
+--         getgenv()[i] = v
+--     end
+-- end
 
 return Module
